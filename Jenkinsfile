@@ -6,12 +6,12 @@ pipeline {
 
     agent any
 
-    stages {
-        stage('Checkout Source') {
-            steps {
-                git 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git'
-            }
-        }
+stage('Checkout Source') {
+  steps {
+    git branch: 'main', url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git'
+  }
+}
+
 
         stage('Build image') {
             steps {
