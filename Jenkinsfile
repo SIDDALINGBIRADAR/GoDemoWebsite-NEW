@@ -6,14 +6,14 @@ pipeline {
 
     agent any
 
-stage('Checkout Source') {
-  steps {
-    git branch: 'main', url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git'
-  }
-}
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Balaganesh15M/jenkins.git'
+            }
+        }
 
-
-        stage('Build image') {
+        stage('Go Build') {
             steps {
                 script {
                     dockerImage = docker.build dockerimagename
