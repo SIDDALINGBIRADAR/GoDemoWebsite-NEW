@@ -13,11 +13,11 @@ spec:
         app: userapi
     spec:
       containers:
-      - name: userapi
-        image: siddalingbiradar/go-website:latest
-        imagePullPolicy: IfNotPresent 
-        ports:
-        - containerPort: 8888
+        - name: userapi
+          image: siddalingbiradar/go-website:latest
+          imagePullPolicy: Always  # <- Prefer Always during testing
+          ports:
+            - containerPort: 8888
 ---
 apiVersion: v1
 kind: Service
@@ -28,6 +28,6 @@ spec:
   selector:
     app: userapi
   ports:
-  - port: 8888
-    targetPort: 8888
-    nodePort: 30080
+    - port: 8888
+      targetPort: 8888
+      nodePort: 30080
