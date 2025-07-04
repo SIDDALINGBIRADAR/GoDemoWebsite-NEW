@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: userapi
-        image: userapi:latest
+        image: siddalingbiradar/go-website:latest
         imagePullPolicy: IfNotPresent 
         ports:
         - containerPort: 8888
