@@ -1,39 +1,51 @@
 pipeline {
+    environment {
+        dockerimagename = 'siddalingbiradar/go-website'
+        dockerImage = ''
+    }
+
     agent any
 
-    environment {
-        IMAGE_NAME = 'myuserapi:latest'
-        DEPLOYMENT_YAML = 'k8s/deployment.yaml'
-    }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout Source') {
             steps {
-                git branch: 'main', url: 'https://github.com/Balaganesh15M/jenkins.git'
+                git 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git'
             }
         }
 
-        stage('Go Build') {
+        stage('Build image') {
             steps {
-                sh '''
-                    go version
-                    go mod init example.com/myapp || true
-                    go build -o userapi
-                '''
+                script {
+                    dockerImage = docker.build dockerimagename
+                }
             }
         }
 
-        stage('Docker Build') {
+        stage('Pushing Image') {
+            environment {
+                registryCredential = 'dockerhublogin'
+            }
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        dockerImage.push('latest')
+                    }
+                }
             }
         }
 
-        stage('Deploy to Minikube') {
+        stage('Deploying App to Kubernetes') {
             steps {
-                sh 'kubectl apply -f $DEPLOYMENT_YAML'
+                script {
+                    sh '''
+        echo 🚀 Deploying to Minikube...
+        kubectl config use-context minikube
+        kubectl apply -f deployment.yaml
+        kubectl rollout status deployment/userapi
+      '''
+                }
             }
         }
+
     }
 }
-
