@@ -34,18 +34,15 @@ pipeline {
             }
         }
 
-        stage('Deploying App to Kubernetes') {
+        stage('Deploy to Minikube') {
             steps {
                 script {
-                    sh '''
-        echo 🚀 Deploying to Minikube...
-        kubectl config use-context minikube
-        kubectl apply -f deployment.yaml
-        kubectl rollout status deployment/userapi
-      '''
+                    withCredentials([file(credentialsId: 'minikube-kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh 'kubectl --kubeconfig=$KUBECONFIG get nodes'
+                        sh 'kubectl --kubeconfig=$KUBECONFIG apply -f deployment.yaml'
+                    }
                 }
             }
         }
-
     }
 }
