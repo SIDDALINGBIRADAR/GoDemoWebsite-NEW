@@ -1,6 +1,7 @@
 pipeline {
-    agent any
-
+    agent {
+        label 'docker'
+    }
     environment {
         IMAGE_NAME = 'siddalingbiradar/go-website'
         TAG = 'latest'
