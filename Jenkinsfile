@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_NAME = 'siddalingbiradar/go-website'
-        IMAGE_TAG = 'latest'
-        REGISTRY_CREDENTIAL = 'dockerhub-creds'       // DockerHub credentials
-        K8S_CREDENTIAL_ID = 'aks-kubeconfig'         // kubeconfig as secret file
+        IMAGE_NAME = 'siddalingbiradar/go-website'
+        TAG = 'latest'
+        REGISTRY_CREDENTIAL = 'dockerhub-creds'
+        KUBECONFIG_CRED = 'aks-kubeconfig'
     }
 
     stages {
@@ -17,25 +17,24 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
-                }
+                sh 'docker build -t $IMAGE_NAME:$TAG .'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', REGISTRY_CREDENTIAL) {
-                        dockerImage.push()
-                    }
+                withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIAL, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                      docker push $IMAGE_NAME:$TAG
+                    '''
                 }
             }
         }
-        stage('Deploy to Minikube') {
+
+        stage('Deploy to AKS') {
             steps {
-                withCredentials([file(credentialsId: 'aks-kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl --kubeconfig=$KUBECONFIG get nodes'
+                withCredentials([file(credentialsId: KUBECONFIG_CRED, variable: 'KUBECONFIG')]) {
                     sh 'kubectl --kubeconfig=$KUBECONFIG apply -f deployment.yaml'
                 }
             }
