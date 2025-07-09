@@ -1,7 +1,7 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml """
+  agent {
+    kubernetes {
+      yaml """
 apiVersion: v1
 kind: Pod
 metadata:
@@ -12,7 +12,9 @@ spec:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:latest
       command:
-        - /busybox/cat
+        - sleep
+      args:
+        - "3600"
       tty: true
       volumeMounts:
         - name: docker-config
@@ -26,27 +28,27 @@ spec:
           - key: .dockerconfigjson
             path: config.json
 """
-        }
+    }
+  }
+ 
+  stages {
+    stage('Clone Repo') {
+      steps {
+        git url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git', branch: 'main'
+      }
     }
  
-    stages {
-        stage('Clone Repo') {
-            steps {
-                git url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git', branch: 'main'
-            }
+    stage('Build & Push Docker Image with Kaniko') {
+      steps {
+        container('kaniko') {
+          sh '''
+          /kaniko/executor \
+            --context=dir://workspace/ \
+            --dockerfile=Dockerfile \
+            --destination=docker.io/siddalingbiradar/go-kaniko-demo:latest
+          '''
         }
- 
-        stage('Build & Push Docker Image with Kaniko') {
-            steps {
-                container('kaniko') {
-                    sh '''
-                    /kaniko/executor \
-                      --context=dir://workspace/ \
-                      --dockerfile=Dockerfile \
-                      --destination=docker.io/bala1115/go-kaniko-demo:latest
-                    '''
-                }
-            }
-        }
+      }
     }
+  }
 }
