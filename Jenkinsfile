@@ -6,41 +6,33 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-    - name: kaniko
-      image: gcr.io/kaniko-project/executor:latest
-      tty: true
-      volumeMounts:
-        - name: docker-config
-          mountPath: /kaniko/.docker/
-  restartPolicy: Never
-  volumes:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    command:
+    - /kaniko/executor
+    args:
+    - --context=git://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git
+    - --dockerfile=Dockerfile
+    - --destination=docker.io/bala1115/go-kaniko-demo:latest
+    - --verbosity=debug
+    volumeMounts:
     - name: docker-config
-      secret:
-        secretName: dockerhub-secret
-        items:
-          - key: .dockerconfigjson
-            path: config.json
+      mountPath: /kaniko/.docker/
+  volumes:
+  - name: docker-config
+    secret:
+      secretName: dockerhub-secret
+      items:
+        - key: .dockerconfigjson
+          path: config.json
 """
     }
   }
-
   stages {
-    stage('Clone Repo') {
+    stage('Build with Kaniko') {
       steps {
-        git url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git', branch: 'main'
-      }
-    }
-
-    stage('Build & Push Docker Image') {
-      steps {
-        container('kaniko') {
-          sh '''
-          /kaniko/executor \
-            --context=dir://workspace/ \
-            --dockerfile=Dockerfile \
-            --destination=docker.io/bala1115/go-kaniko-demo:latest
-          '''
-        }
+        echo 'Build started...'
+        // No `sh` block needed. Kaniko runs from container's command.
       }
     }
   }
