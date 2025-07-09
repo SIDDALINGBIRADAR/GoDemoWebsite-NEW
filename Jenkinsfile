@@ -13,7 +13,7 @@ spec:
     args:
     - --context=git://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git
     - --dockerfile=Dockerfile
-    - --destination=docker.io/bala1115/go-kaniko-demo:latest
+    - --destination=docker.io/bala1511/go-kaniko-demo:latest
     - --verbosity=debug
     volumeMounts:
     - name: docker-config
