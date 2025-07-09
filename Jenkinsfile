@@ -1,4 +1,4 @@
-[16:01] Bala Ganesh M
+
 pipeline {
 
   agent {
