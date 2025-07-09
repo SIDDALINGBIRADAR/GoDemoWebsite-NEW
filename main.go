@@ -23,7 +23,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintln(w, "Welcome , this website is just for testing purpose!!! this is modified version")
+    fmt.Fprintln(w, "Welcome , this website is just for testing purpose!!! this is modified version 09/07/2025")
 }
 
 func main() {
