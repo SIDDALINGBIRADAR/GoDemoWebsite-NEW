@@ -4,17 +4,12 @@ pipeline {
       yaml """
 apiVersion: v1
 kind: Pod
-metadata:
-  labels:
-    jenkins: kaniko
 spec:
   containers:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:latest
       command:
-        - /kaniko/executor
-      args:
-        - --no-op
+        - cat
       tty: true
       volumeMounts:
         - name: docker-config
