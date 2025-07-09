@@ -12,9 +12,9 @@ spec:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:latest
       command:
-        - sleep
+        - /kaniko/executor
       args:
-        - "3600"
+        - --no-op
       tty: true
       volumeMounts:
         - name: docker-config
@@ -45,7 +45,7 @@ spec:
           /kaniko/executor \
             --context=dir://workspace/ \
             --dockerfile=Dockerfile \
-            --destination=docker.io/siddalingbiradar/go-kaniko-demo:latest
+            --destination=docker.io/bala1115/go-kaniko-demo:latest
           '''
         }
       }
