@@ -9,7 +9,10 @@ spec:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
     command:
-    - /busybox/cat
+    - /bin/sh
+    args:
+    - -c
+    - "sleep infinity"
     tty: true
     volumeMounts:
     - name: docker-config
@@ -17,7 +20,7 @@ spec:
   volumes:
   - name: docker-config
     secret:
-      secretName: kaniko-secret
+      secretName: dockerhub-creds
       items:
       - key: .dockerconfigjson
         path: config.json
