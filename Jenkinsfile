@@ -8,8 +8,6 @@ spec:
   containers:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:latest
-      command:
-        - cat
       tty: true
       volumeMounts:
         - name: docker-config
@@ -25,15 +23,15 @@ spec:
 """
     }
   }
- 
+
   stages {
     stage('Clone Repo') {
       steps {
         git url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git', branch: 'main'
       }
     }
- 
-    stage('Build & Push Docker Image with Kaniko') {
+
+    stage('Build & Push Docker Image') {
       steps {
         container('kaniko') {
           sh '''
