@@ -9,10 +9,9 @@ spec:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
     command:
-    - /bin/sh
+    - /busybox/cat
     args:
-    - -c
-    - "sleep infinity"
+    - "0"
     tty: true
     volumeMounts:
     - name: docker-config
@@ -39,10 +38,12 @@ spec:
         container('kaniko') {
           sh '''
             /kaniko/executor \
-            --context `pwd` \
-            --dockerfile=Dockerfile \
-            --destination=siddaling/go-web-site:latest \
-            --verbosity=info
+              --context `pwd` \
+              --dockerfile=Dockerfile \
+              --destination=docker.io/siddaling/go-web-site:latest \
+              --verbosity=info \
+              --insecure \
+              --skip-tls-verify
           '''
         }
       }
