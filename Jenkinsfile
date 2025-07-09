@@ -1,102 +1,95 @@
-
 pipeline {
-
-  agent {
-
-    kubernetes {
-
-      yaml """
-
+    agent {
+        kubernetes {
+            yaml """
 apiVersion: v1
-
 kind: Pod
-
+metadata:
+  labels:
+    some-label: kaniko
 spec:
-
   containers:
-
-  - name: kaniko
-
-    image: gcr.io/kaniko-project/executor:latest
-
-    command:
-
-    - /kaniko/executor
-
-    args:
-
-    - --dockerfile=Dockerfile
-
-    - --context=.
-
-    - --destination=docker.io/siddaling/go-web-site:latest
-
-    - --verbosity=info
-
-    - --insecure
-
-    - --skip-tls-verify
-
-    volumeMounts:
-
-      - name: docker-config
-
-        mountPath: /kaniko/.docker/
-
-        readOnly: true
-
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - "--dockerfile=/workspace/Dockerfile"
+        - "--context=dir://workspace/"
+        - "--destination=docker.io/siddalingbiradar/go-kaniko-demo:latest"
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker/
   restartPolicy: Never
-
   volumes:
-
     - name: docker-config
-
       secret:
-
-        secretName: kaniko-secret
-
+        secretName: dockerhub-secret
         items:
-
           - key: .dockerconfigjson
-
             path: config.json
-
 """
-
-    }
-
-  }
- 
-  stages {
-
-    stage('Checkout') {
-
-      steps {
-
-        git branch: 'main',
-
-            url: 'https://github.com/SIDDALINGBIRADAR/GoDemoWebsite-NEW.git'
-
-      }
-
-    }
- 
-    stage('Build and Push Docker Image') {
-
-      steps {
-
-        container('kaniko') {
-
-          echo "Docker image is being built and pushed using Kaniko"
-
         }
-
-      }
-
     }
-
-  }
-
-}
-
  
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git url: 'pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    some-label: kaniko
+spec:
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - "--dockerfile=/workspace/Dockerfile"
+        - "--context=dir://workspace/"
+        - "--destination=docker.io/bala1115/go-kaniko-demo:latest"
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker/
+  restartPolicy: Never
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: dockerhub-secret
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+"""
+        }
+    }
+ 
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git url: 'https://github.com/siddalingbiradar/go-kaniko-demo.git', branch: 'main'
+            }
+        }
+ 
+        stage('Build & Push with Kaniko') {
+            steps {
+                container('kaniko') {
+                    echo 'Building Docker image with Kaniko...'
+                }
+            }
+        }
+    }
+}', branch: 'main'
+            }
+        }
+ 
+        stage('Build & Push with Kaniko') {
+            steps {
+                container('kaniko') {
+                    echo 'Building Docker image with Kaniko...'
+                }
+            }
+        }
+    }
+}
