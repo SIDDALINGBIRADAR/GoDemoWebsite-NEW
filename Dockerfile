@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 # Build the binary statically
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o userapi .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -buildvcs=false -o userapi .
 
 # Stage 2: Run
 FROM scratch
