@@ -53,23 +53,26 @@ spec:
             }
         }
 
-        stage('Build with Kaniko') {
-  steps {
-    container('kaniko') {
-      sh '''
-        echo '📂 Listing /workspace/workspace/new:'
-        ls -la /workspace/workspace/new
-
-        echo '🚀 Starting Kaniko Build'
-        /kaniko/executor \
-          --context=dir:///workspace/workspace/new \
-          --dockerfile=/workspace/workspace/new/Dockerfile \
-          --destination=docker.io/siddalingbiradar/userapi:latest \
-          --verbosity=debug
-      '''
+         stage('Build with Kaniko') {
+      steps {
+        container('kaniko') {
+          script {
+            sh '''
+              echo "📂 Listing current Kaniko working directory:"
+              pwd
+              echo "📂 Listing files in WORKSPACE:"
+              ls -la ${WORKSPACE}
+            '''
+            sh '''
+              /kaniko/executor \
+                --dockerfile=Dockerfile \
+                --context=${WORKSPACE} \
+                --destination=docker.io/your-username/your-image:latest
+            '''
+          }
+        }
+      }
     }
-  }
-}
 
     }
 }
