@@ -67,7 +67,7 @@ spec:
               /kaniko/executor \
                 --dockerfile=Dockerfile \
                 --context=${WORKSPACE} \
-                --destination=docker.io/your-username/your-image:latest
+                --destination=docker.io/siddalingbiradar/go-demo-website:latest
             '''
           }
         }
